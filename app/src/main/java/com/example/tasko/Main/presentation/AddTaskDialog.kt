@@ -32,6 +32,7 @@ import java.io.FileOutputStream
 
 import java.io.File
 import java.io.InputStream
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,7 +44,7 @@ fun AddTaskDialog(
     var taskTitle by remember { mutableStateOf(task?.title ?: "") }
     var taskPriority by remember { mutableStateOf(task?.priority?.toString() ?: "") }
     var taskDescription by remember { mutableStateOf(task?.description ?: "") }
-    var taskDueDate by remember { mutableStateOf(task?.dueDate ?: "") }
+    var taskDueDate by remember { mutableStateOf(task?.dueDate ?: LocalDate.now().toString()) }
     var taskImagePath by remember { mutableStateOf(task?.imagePath ?:"") }
 
     var isPriorityValid by remember { mutableStateOf(true) }
@@ -74,7 +75,7 @@ fun AddTaskDialog(
     // Open date picker
     fun showDatePicker() {
         android.app.DatePickerDialog(context, { _, selectedYear, selectedMonth, selectedDay ->
-            taskDueDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
+            taskDueDate = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
         }, year, month, day).show()
     }
 

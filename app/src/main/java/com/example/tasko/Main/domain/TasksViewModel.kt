@@ -88,4 +88,20 @@ class TasksViewModel(private val repository: TasksRepository) : ViewModel() {
         _searchQuery.value = query
     }
 
+    private val _selectedDate = MutableStateFlow(java.time.LocalDate.now())
+    val selectedDate: StateFlow<java.time.LocalDate> = _selectedDate
+
+    val tasksBySelectedDate: StateFlow<List<Task>> = _selectedDate
+        .flatMapLatest { date ->
+            if (_uiState.value == "Pending") {
+                repository.getPendingTasksByDate(date.toString())
+            } else {
+                repository.getCompletedTasksByDate(date.toString())
+            }
+        }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    fun updateSelectedDate(date: java.time.LocalDate) {
+        _selectedDate.value = date
+    }
+
 }

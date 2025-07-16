@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+//import com.example.tasko.Main.presentation.TaskSearch
 import com.example.tasko.ui.theme.TaskoTheme
 import com.youcef_bounaas.tasko.Main.data.local.TaskDatabase
 import com.youcef_bounaas.tasko.Main.domain.TasksRepository
@@ -37,6 +38,7 @@ class MainActivity : ComponentActivity() {
 
 
                 TaskScreen(viewModel = taskViewModel)
+                //TaskSearch(viewModel = taskViewModel)
 
 
             }

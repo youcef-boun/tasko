@@ -26,7 +26,11 @@ interface TasksDao {
     @Query("SELECT * FROM tasks WHERE title LIKE :searchQuery OR description LIKE :searchQuery")
     fun searchDatabase(searchQuery: String ) : Flow<List<Task>>
 
+    @Query("SELECT * FROM tasks WHERE isCompleted = 0 AND dueDate = :date ORDER BY priority, dueDate")
+    fun getPendingTasksByDate(date: String): Flow<List<Task>>
 
+    @Query("SELECT * FROM tasks WHERE isCompleted = 1 AND dueDate = :date ORDER BY priority, dueDate DESC")
+    fun getCompletedTasksByDate(date: String): Flow<List<Task>>
 
 
 }

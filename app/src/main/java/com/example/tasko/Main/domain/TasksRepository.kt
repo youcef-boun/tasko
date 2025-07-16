@@ -26,5 +26,13 @@ class TasksRepository(private val tasksDao: TasksDao) {
         return tasksDao.searchDatabase(query)
     }
 
+    fun getPendingTasksByDate(date: String): Flow<List<Task>> {
+        return tasksDao.getPendingTasksByDate(date)
+    }
+
+    fun getCompletedTasksByDate(date: String): Flow<List<Task>> {
+        return tasksDao.getCompletedTasksByDate(date)
+    }
+
 
 }
