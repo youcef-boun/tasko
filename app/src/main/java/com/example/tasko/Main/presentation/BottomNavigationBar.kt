@@ -1,32 +1,21 @@
 package com.example.tasko.Main.presentation
 
-
-
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
 import androidx.compose.ui.tooling.preview.Preview
+import java.time.LocalDate
 
 @Composable
 fun BottomNavigationBar(
@@ -60,7 +49,7 @@ fun BottomNavigationBar(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "16",
+                    text = LocalDate.now().dayOfMonth.toString(),
                     color = if (selectedIndex == 0) Color.White else selectedColor,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
@@ -131,73 +120,6 @@ fun BottomNavigationBar(
             )
         }
     }
-}
-
-// Example usage
-@Composable
-fun TaskManagementApp() {
-    var isDarkTheme by remember { mutableStateOf(false) }
-    var currentScreen by remember { mutableStateOf(0) } // 0 = Add, 1 = View, 2 = Navigation
-    var tasks by remember { mutableStateOf(listOf<Task>()) }
-
-    val sampleTask = Task(
-        id = "1",
-        title = "task 1",
-        description = "description 1",
-        priority = priorities[0],
-        date = "Jul 13",
-        isCompleted = false
-    )
-
-    Column(modifier = Modifier.fillMaxSize()) {
-        when (currentScreen) {
-            0 -> TaskAddingUI(
-                isDarkTheme = isDarkTheme,
-                onAddTask = { title, description, priority ->
-                    val newTask = Task(
-                        id = System.currentTimeMillis().toString(),
-                        title = title,
-                        description = description,
-                        priority = priority,
-                        date = "Jul 16",
-                        isCompleted = false
-                    )
-                    tasks = tasks + newTask
-                }
-            )
-            1 -> TaskViewUI(
-                task = sampleTask,
-                isDarkTheme = isDarkTheme,
-                onUpdateTask = { updatedTask ->
-                    // Handle task update
-                }
-            )
-            2 -> Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(if (isDarkTheme) Color(0xFF1A1A1A) else Color(0xFFF5F5F5)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Navigation Demo",
-                    color = if (isDarkTheme) Color.White else Color.Black,
-                    fontSize = 24.sp
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        BottomNavigationBar(
-            isDarkTheme = isDarkTheme,
-            selectedIndex = currentScreen,
-            onItemSelected = { index ->
-                currentScreen = index
-            }
-        )
-    }
-
-   
 }
 
 @Preview(showBackground = true)

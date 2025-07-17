@@ -99,7 +99,9 @@ fun TaskScreen(viewModel: TasksViewModel) {
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { showDialog.value = true }) {
+            FloatingActionButton(
+                onClick = { showDialog.value = true }
+            ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Task")
             }
         }
@@ -107,7 +109,7 @@ fun TaskScreen(viewModel: TasksViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
+                .padding(0.dp)
         ) {
 
             CalendarView(

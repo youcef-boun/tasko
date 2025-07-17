@@ -56,11 +56,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import coil.compose.rememberImagePainter
 import com.example.tasko.Main.presentation.CalendarView
 import com.youcef_bounaas.tasko.Main.data.local.Task
+import com.youcef_bounaas.tasko.Main.presentation.AddTaskDialog
 import java.time.LocalDate
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun TaskSearch(viewModel: TasksViewModel) {
+fun TodayScreen(viewModel: TasksViewModel) {
     val showDialog = remember { mutableStateOf(false) }
     val showUpdateDialog = remember { mutableStateOf(false) }
     val selectedTask = remember { mutableStateOf<Task?>(null) }
@@ -68,6 +70,8 @@ fun TaskSearch(viewModel: TasksViewModel) {
     // Collect states
     val uiState by viewModel.uiState.collectAsState() // Pending or Completed
     val searchQuery by viewModel.searchQuery.collectAsState() // Current search query
+    val selectedDate by viewModel.selectedDate.collectAsState()
+    val tasksBySelectedDate by viewModel.tasksBySelectedDate.collectAsState(emptyList())
 
     // Decide which tasks to show based on searchQuery and toggle
     val tasks = if (uiState == "Pending") viewModel.pendingTasks else viewModel.completedTasks
@@ -83,7 +87,7 @@ fun TaskSearch(viewModel: TasksViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Task Search \n $uiState Tasks") },
+                title = { Text("Task Manager \n $uiState Tasks") },
                 actions = {
                     IconButton(onClick = { viewModel.toggleTaskFilter() }) {
                         if (uiState == "Pending") {
@@ -106,11 +110,13 @@ fun TaskSearch(viewModel: TasksViewModel) {
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Add the search text field
-            SearchTextField(searchQuery = searchQuery, viewModel = viewModel)
+
+
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(displayedTasks) { task ->
-                    TaskItem(task, viewModel, selectedTask, showUpdateDialog)
+                items(
+                    if (searchQuery.isNotEmpty()) displayedTasks else tasksBySelectedDate
+                ) { task ->
+                    TaskItems(task, viewModel, selectedTask, showUpdateDialog)
                 }
             }
         }
@@ -139,7 +145,7 @@ fun TaskSearch(viewModel: TasksViewModel) {
 }
 
 @Composable
-fun TaskItem(
+fun TaskItems(
     task: Task,
     viewModel: TasksViewModel,
     selectedTask: MutableState<Task?>,
@@ -205,32 +211,5 @@ fun TaskItem(
             }
         }
     }
-}
-
-@Composable
-fun SearchTextField(searchQuery: String, viewModel: TasksViewModel) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    OutlinedTextField(
-        value = searchQuery,
-        onValueChange = { viewModel.updateSearchQuery(it) },
-        label = { Text("Search") },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        shape = RoundedCornerShape(100.dp),
-        trailingIcon = {
-            Icon(Icons.Default.Search, contentDescription = "Search Icon")
-        },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Search
-        ),
-        keyboardActions = KeyboardActions(
-            onSearch = {
-                keyboardController?.hide() // Hide keyboard on search action
-            }
-        )
-    )
 }
 
