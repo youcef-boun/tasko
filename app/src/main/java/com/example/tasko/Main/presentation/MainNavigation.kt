@@ -38,10 +38,10 @@ fun MainNavigation(viewModel: TasksViewModel) {
                     .weight(1f)
             ) {
                 when (selectedScreenIndex) {
-                    0 -> TaskScreen(viewModel = viewModel)
-                    1 -> TaskScreen(viewModel = viewModel) // Upcoming - same as today for now
-                    2 -> TaskSearch(viewModel = viewModel)
-                    3 -> TaskScreen(viewModel = viewModel) // Browse - same as today for now
+                    0 -> TaskToday(viewModel = viewModel) // Today
+                    1 -> TaskScreen(viewModel = viewModel) // Upcoming
+                    2 -> TaskSearch(viewModel = viewModel) // Search
+
                 }
             }
 

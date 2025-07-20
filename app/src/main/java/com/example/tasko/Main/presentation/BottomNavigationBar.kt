@@ -25,14 +25,14 @@ fun BottomNavigationBar(
 ) {
     val backgroundColor = if (isDarkTheme) Color(0xFF2D2D2D) else Color.White
     val selectedColor = if (isDarkTheme) Color(0xFFE53E3E) else Color(0xFFE53E3E)
-    val unselectedColor = if (isDarkTheme) Color(0xFF888888) else Color(0xFF666666)
+    val unselectedColor = if (isDarkTheme) Color(0xFFFFFFFF) else Color(0xFF000000)
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(backgroundColor)
             .padding(vertical = 8.dp, horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         // Today
         Column(
@@ -50,7 +50,7 @@ fun BottomNavigationBar(
             ) {
                 Text(
                     text = LocalDate.now().dayOfMonth.toString(),
-                    color = if (selectedIndex == 0) Color.White else selectedColor,
+                    color =  unselectedColor,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -68,12 +68,23 @@ fun BottomNavigationBar(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.clickable { onItemSelected(1) }
         ) {
-            Icon(
-                Icons.Default.DateRange,
-                contentDescription = "Upcoming",
-                tint = if (selectedIndex == 1) selectedColor else unselectedColor,
-                modifier = Modifier.size(24.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .background(
+                        if (selectedIndex == 1) selectedColor else Color.Transparent,
+                        RoundedCornerShape(8.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ){
+                Icon(
+                    Icons.Default.DateRange,
+                    contentDescription = "Upcoming",
+                    tint =  unselectedColor,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "Upcoming",
@@ -87,12 +98,23 @@ fun BottomNavigationBar(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.clickable { onItemSelected(2) }
         ) {
-            Icon(
-                Icons.Default.Search,
-                contentDescription = "Search",
-                tint = if (selectedIndex == 2) selectedColor else unselectedColor,
-                modifier = Modifier.size(24.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .background(
+                        if (selectedIndex == 2) selectedColor else Color.Transparent,
+                        RoundedCornerShape(8.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ){
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = "Search",
+                    tint =  unselectedColor,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "Search",
@@ -101,24 +123,7 @@ fun BottomNavigationBar(
             )
         }
 
-        // Browse
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.clickable { onItemSelected(3) }
-        ) {
-            Icon(
-                Icons.Default.Menu,
-                contentDescription = "Browse",
-                tint = if (selectedIndex == 3) selectedColor else unselectedColor,
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Browse",
-                color = if (selectedIndex == 3) selectedColor else unselectedColor,
-                fontSize = 12.sp
-            )
-        }
+
     }
 }
 

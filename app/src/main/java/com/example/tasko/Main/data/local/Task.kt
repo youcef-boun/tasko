@@ -1,5 +1,6 @@
 package com.youcef_bounaas.tasko.Main.data.local
 
+import android.graphics.Color
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -14,9 +15,5 @@ data class Task (
     var isCompleted : Boolean,
 
     val imagePath: String
-
-
-
-
-
 )
+

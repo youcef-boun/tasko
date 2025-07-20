@@ -16,26 +16,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -50,17 +44,13 @@ import com.youcef_bounaas.tasko.Main.domain.TasksViewModel
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import coil.compose.rememberImagePainter
-import com.example.tasko.Main.presentation.CalendarView
 import com.youcef_bounaas.tasko.Main.data.local.Task
-import java.time.LocalDate
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskSearch(viewModel: TasksViewModel) {
+fun TaskToday(viewModel: TasksViewModel) {
     val showDialog = remember { mutableStateOf(false) }
     val showUpdateDialog = remember { mutableStateOf(false) }
     val selectedTask = remember { mutableStateOf<Task?>(null) }
@@ -68,6 +58,7 @@ fun TaskSearch(viewModel: TasksViewModel) {
     // Collect states
     val uiState by viewModel.uiState.collectAsState() // Pending or Completed
     val searchQuery by viewModel.searchQuery.collectAsState() // Current search query
+    val tasksBySelectedDate by viewModel.tasksBySelectedDate.collectAsState(emptyList())
 
     // Decide which tasks to show based on searchQuery and toggle
     val tasks = if (uiState == "Pending") viewModel.pendingTasks else viewModel.completedTasks
@@ -82,20 +73,15 @@ fun TaskSearch(viewModel: TasksViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(" Search \n $uiState Tasks") },
-                actions = {
-                    IconButton(onClick = { viewModel.toggleTaskFilter() }) {
-                        if (uiState == "Pending") {
-                            Icon(Icons.Default.CheckCircle, contentDescription = "Toggle Task Filter")
-                        } else {
-                            Icon(Icons.Default.PlayArrow, contentDescription = "Toggle Task Filter")
-                        }
-                    }
-                }
+                title = { Text("Today") },
+
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { showDialog.value = true }) {
+            FloatingActionButton(
+                modifier = Modifier.padding(top = 600.dp),
+                onClick = { showDialog.value = true }
+            ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Task")
             }
         }
@@ -103,20 +89,21 @@ fun TaskSearch(viewModel: TasksViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
+                .padding(top = 80.dp)
         ) {
-            // Add the search text field
-            SearchTextField(searchQuery = searchQuery, viewModel = viewModel)
+
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(displayedTasks) { task ->
-                    TaskItem(task, viewModel, selectedTask, showUpdateDialog)
+                items(
+                    if (searchQuery.isNotEmpty()) displayedTasks else tasksBySelectedDate
+                ) { task ->
+                    TaskItemToday(task, viewModel, selectedTask, showUpdateDialog)
                 }
             }
         }
 
         // Add new task dialog
         if (showDialog.value) {
-            AddTaskDialog(
+            com.youcef_bounaas.tasko.Main.presentation.AddTaskDialog(
                 onDismiss = { showDialog.value = false },
                 onTaskAdded = { newTask -> viewModel.upsertTask(newTask) }
             )
@@ -125,7 +112,7 @@ fun TaskSearch(viewModel: TasksViewModel) {
         // Update task dialog
         if (showUpdateDialog.value && selectedTask.value != null) {
             val taskToUpdate = selectedTask.value!!
-            AddTaskDialog(
+            com.youcef_bounaas.tasko.Main.presentation.AddTaskDialog(
                 task = taskToUpdate,
                 onDismiss = { showUpdateDialog.value = false },
                 onTaskAdded = { updatedTask ->
@@ -138,7 +125,7 @@ fun TaskSearch(viewModel: TasksViewModel) {
 }
 
 @Composable
-fun TaskItem(
+fun TaskItemToday(
     task: Task,
     viewModel: TasksViewModel,
     selectedTask: MutableState<Task?>,
@@ -206,30 +193,4 @@ fun TaskItem(
     }
 }
 
-@Composable
-fun SearchTextField(searchQuery: String, viewModel: TasksViewModel) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    OutlinedTextField(
-        value = searchQuery,
-        onValueChange = { viewModel.updateSearchQuery(it) },
-        label = { Text("Search") },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        shape = RoundedCornerShape(100.dp),
-        trailingIcon = {
-            Icon(Icons.Default.Search, contentDescription = "Search Icon")
-        },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Search
-        ),
-        keyboardActions = KeyboardActions(
-            onSearch = {
-                keyboardController?.hide() // Hide keyboard on search action
-            }
-        )
-    )
-}
 

@@ -86,20 +86,13 @@ fun TaskScreen(viewModel: TasksViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Task Manager \n $uiState Tasks") },
-                actions = {
-                    IconButton(onClick = { viewModel.toggleTaskFilter() }) {
-                        if (uiState == "Pending") {
-                            Icon(Icons.Default.CheckCircle, contentDescription = "Toggle Task Filter")
-                        } else {
-                            Icon(Icons.Default.PlayArrow, contentDescription = "Toggle Task Filter")
-                        }
-                    }
-                }
+                title = { Text("Upcoming") },
+
             )
         },
         floatingActionButton = {
             FloatingActionButton(
+                modifier = Modifier.padding(top = 600.dp),
                 onClick = { showDialog.value = true }
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Task")
@@ -109,7 +102,7 @@ fun TaskScreen(viewModel: TasksViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(0.dp)
+                .padding(top = 80.dp)
         ) {
 
             CalendarView(
